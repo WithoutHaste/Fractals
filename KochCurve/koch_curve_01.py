@@ -50,33 +50,39 @@ class Geometry:
 		yPrime = (pointARelativeToOrigin.y * Math.cos(radians)) + (pointARelativeToOrigin.x * Math.sin(radians))
 		return Point(xPrime, yPrime) + pointCenter
 
+#generates entire curve and draw it on the image
 class KochCurve:
 	def __init__(self, image):
 		self.image = image
 		self.draw = ImageDraw.Draw(self.image)
 		self.generate(Point(0,0+2), Point(image.width, 0+2))
+	#generate and draw entire Koch Curve to default depth
 	def generate(self, pointStart, pointEnd):
-		#generate entire Koch Curve to default depth
 		unit = KochCurveUnit(pointStart, pointEnd)
-		self.drawUnit(unit);
+		self.drawUnit(unit)
+		if unit.getLength() < 10: #stop recursion
+			return
+		self.generate(unit.pointA, unit.pointB)
+		self.generate(unit.pointB, unit.pointC)
+		self.generate(unit.pointC, unit.pointD)
+		self.generate(unit.pointD, unit.pointE)
+	#image will be inverted on y-axis since images have origin in upper-left instead of bottom-left
 	def drawUnit(self, unit):
-		#image will be inverted on y-axis since images have origin in upper-left instead of bottom-left
-		self.draw.line([unit.pointA.toTuple(), unit.pointB.toTuple(), unit.pointC.toTuple(), unit.pointD.toTuple(), unit.pointE.toTuple()], fill='gray', width=2)
+		self.draw.line([unit.pointA.toTuple(), unit.pointE.toTuple()], fill='white', width=1)
+		self.draw.line([unit.pointA.toTuple(), unit.pointB.toTuple(), unit.pointC.toTuple(), unit.pointD.toTuple(), unit.pointE.toTuple()], fill='gray', width=1)
 		
+#hard-coded to equilateral triangle, 1/3 of length
 class KochCurveUnit:
 	def __init__(self, pointA, pointE):
 		fullDistance = pointA.distance(pointE)
-		print(fullDistance)
 		self.pointA = pointA
-		print(self.pointA)
 		self.pointB = Geometry.getPointBetweenPoints(pointA, pointE, fullDistance / 3)
-		print(self.pointB)
 		self.pointD = Geometry.getPointBetweenPoints(pointA, pointE, 2 * fullDistance / 3)
 		self.pointC = Geometry.rotatePointAroundPoint(self.pointD, pointCenter = self.pointB, degrees = 60)
-		print(self.pointC)
-		print(self.pointD)
 		self.pointE = pointE
-		print(self.pointE)
+	#returns distance from A to E
+	def getLength(self):
+		return self.pointA.distance(self.pointE)
 		
 #################################
 
