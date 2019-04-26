@@ -51,11 +51,22 @@ class Geometry:
 		return Point(xPrime, yPrime) + pointCenter
 
 #generates entire curve and draw it on the image
+#a shape defined clockwise will grow outward, a shape defined counter-clockwise will grow inward
 class KochCurve:
-	def __init__(self, image):
+	#generate and draw entire Koch curve, starting with the initial points
+	#if there are more than 2 points, it is assumed the first and last are joined as well
+	def __init__(self, image, listInitialPoints):
 		self.image = image
 		self.draw = ImageDraw.Draw(self.image)
-		self.generate(Point(0,0+2), Point(image.width, 0+2))
+		
+		count = len(listInitialPoints)
+		if count == 1:
+			return
+		elif count == 2:
+			self.generate(listInitialPoints[0], listInitialPoints[1])
+		else:
+			for i in range(-1, count-1):
+				self.generate(listInitialPoints[i], listInitialPoints[i+1])
 	#generate and draw entire Koch Curve to default depth
 	def generate(self, pointStart, pointEnd):
 		unit = KochCurveUnit(pointStart, pointEnd)
@@ -86,9 +97,24 @@ class KochCurveUnit:
 		
 #################################
 
-dimensions = (800, 600)
-outputFileName = '../output/test.png'
- 
-image = Image.new('RGB', dimensions, 'white')
-kochCurve = KochCurve(image);
-image.save(outputFileName)
+#one line across entire image
+image = Image.new('RGB', (800, 400), 'white')
+kochCurve = KochCurve(image, [Point(0, 2), Point(image.width, 2)]);
+image.save('../output/koch_curve_line.png')
+
+#equilateral triangle centered in image
+image = Image.new('RGB', (800, 800), 'white')
+center = Point(400, 400)
+distance = 300
+points = [Point(center.x, center.y - distance)] #top of triangle
+points.append(Geometry.rotatePointAroundPoint(points[0], center, degrees = 120)) #bottom-left of triangle
+points.append(Geometry.rotatePointAroundPoint(points[0], center, degrees = -120)) #bottom-right of triangle
+kochCurve = KochCurve(image, points);
+image.save('../output/koch_curve_triangle_inward.png')
+
+#equilateral triangle centered in image
+image = Image.new('RGB', (800, 800), 'white')
+reversedPoints = points[:]
+reversedPoints.reverse()
+kochCurve = KochCurve(image, reversedPoints);
+image.save('../output/koch_curve_triangle_outward.png')
