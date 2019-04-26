@@ -157,3 +157,15 @@ image = Image.new('RGB', (800, 400), 'white')
 kochCurve = KochCurve(image, [Point(0, 2), Point(image.width, 2)], sides=5);
 image.save('../output/koch_curve_line_pentagon.png')
 
+#equilateral pentagon centered in image
+image = Image.new('RGB', (800, 800), 'white')
+center = Point(400, 400)
+distance = 250
+points = [Point(center.x, center.y - distance)] #top of pentagon
+points.append(Geometry.rotatePointAroundPoint(points[0], center, degrees = -72)) #top-right of pentagon
+points.append(Geometry.rotatePointAroundPoint(points[0], center, degrees = -144)) #bottom-right of pentagon
+points.append(Geometry.rotatePointAroundPoint(points[0], center, degrees = -216)) #bottom-left of pentagon
+points.append(Geometry.rotatePointAroundPoint(points[0], center, degrees = -288)) #top-left of pentagon
+kochCurve = KochCurve(image, points, sides=5);
+image.save('../output/koch_curve_pentagon_outward.png')
+
