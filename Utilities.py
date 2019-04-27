@@ -57,3 +57,33 @@ class Geometry:
 			raise Exception('Requires at least 3 sides.')
 		totalDegrees = (sides - 2) * 180 #triangle has 180*, square has 360*, pentagon has 540*, etc
 		return totalDegrees / sides
+	@staticmethod
+	#http://mathworld.wolfram.com/TrianglePointPicking.html
+	#returns a random point within a triangle with uniform distribution
+	def getRandomPointInTriangle(pointA, pointB, pointC):
+		originPoint = Geometry.getLeftmostLowestPoint([pointA, pointB, pointC])
+		v1 = None
+		v2 = None
+		if (originPoint == pointA):
+			v1 = pointB
+			v2 = pointC
+		elif (originPoint == pointB):
+			v1 = pointA
+			v2 = pointC
+		else:
+			v1 = pointA
+			v2 = pointB
+		
+	@staticmethod
+	#return point that is (first) leftmost, then (second) lowest
+	def getLeftmostLowestPoint(listPoints):
+		minX = listPoints[0].x
+		for point in listPoints:
+			minX = min(minX, point.x)
+		minPoint = None
+		for point in listPoints:
+			if (minX != point.x):
+				continue
+			if (minPoint == None or minPoint.y > point.y):
+				minPoint = point
+		return minPoint
