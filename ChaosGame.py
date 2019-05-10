@@ -53,12 +53,12 @@ class ChaosGame:
 				self.image.save(imageFilename)
 				imageFilenames.append(imageFilename)
 			imageIndex += 1
-		Graphics.saveAnimatedGif(self.gifFilename, imageFilenames);
+		Graphics.saveAnimatedGif(self.gifFilename, imageFilenames, framesPerSecond=10)
 	#generate and return a list of points
 	def generatePoints(self, pointReference, iterationCount):
 		points = []
 		for i in range(iterationCount):
-			nextVertex = self.getRandomVertex(self.listVertices);
+			nextVertex = self.getRandomVertex(self.listVertices)
 			nextPoint = Geometry.getPointHalfwayBetweenPoints(pointReference, nextVertex)
 			points.append(nextPoint)
 			pointReference = nextPoint

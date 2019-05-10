@@ -1,5 +1,0 @@
-Koch Curve
-
-Chaos Game
-	Sierpinski Triangle
-	same thing with Pentagon - see star generation on wikipedia page for chaos game

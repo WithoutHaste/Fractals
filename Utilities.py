@@ -95,9 +95,9 @@ class Geometry:
 #static graphical operations		
 class Graphics:
 	@staticmethod
-	def saveAnimatedGif(filename, imageFilenames):
+	def saveAnimatedGif(filename, imageFilenames, framesPerSecond):
 		images = []
 		for imageFilename in imageFilenames:
 			images.append(imageio.imread(imageFilename))
-		imageio.mimsave(filename, images, fps=10)
+		imageio.mimsave(filename, images, fps=framesPerSecond)
 		
