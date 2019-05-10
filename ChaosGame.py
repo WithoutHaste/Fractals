@@ -14,49 +14,73 @@
 from PIL import Image, ImageDraw
 import random
 from Utilities import *
+import sys
 
 #Runs the chaos game on the provided polygon and draw the result
 class ChaosGame:
-	def __init__(self, image, listVertices):
+	def __init__(self, image, listVertices, saveAnimatedGif=False, gifFilename=None):
 		self.image = image
 		self.draw = ImageDraw.Draw(self.image)
-		
-		self.outline(listVertices)
-		 #TODO: get random point in triangle
-		self.generate(listVertices, Point(300, 310), previousVertex=None)
+		self.gifFilename = gifFilename
+		self.listVertices = listVertices
+
+		self.outline()
+
+		 #TODO: get random point in triangle instead of this static one
+		if(saveAnimatedGif):
+			self.generateAnimated(Point(300, 310), iterationCount=25000)
+		else:
+			self.generateStatic(Point(300, 310), iterationCount=90000)
+
 	#draw the outline of the polygon
-	def outline(self, listVertices):
-		self.draw.line([point.toTuple() for point in listVertices], fill='gray', width=1)
-		self.draw.line([listVertices[0].toTuple(), listVertices[-1].toTuple()], fill='gray', width=1)
-	#generate and draw the next point
-	def generate(self, listVertices, pointReference, previousVertex):
-		pointIndex = 0 #it takes a few iterations to settle into the proper pattern
+	def outline(self):
+		self.draw.line([point.toTuple() for point in self.listVertices], fill='gray', width=1)
+		self.draw.line([self.listVertices[0].toTuple(), self.listVertices[-1].toTuple()], fill='gray', width=1)
+	#generate and draw all the points - store static image
+	def generateStatic(self, pointReference, iterationCount):
+		points = self.generatePoints(pointReference, iterationCount)
+		for point in points:
+			self.draw.point([point.toTuple()], fill='gray')
+	#generate and draw all the points - save animated gif
+	def generateAnimated(self, pointReference, iterationCount):
+		points = self.generatePoints(pointReference, iterationCount)
 		imageFilenames = []
 		imageIndex = 0
-		for i in range(25000):
-			nextVertex = self.getRandomVertex(listVertices, previousVertex);
-			nextPoint = Geometry.getPointHalfwayBetweenPoints(pointReference, nextVertex)
-			if(pointIndex > 10):
-				self.draw.point([nextPoint.toTuple()], fill='gray')
-			pointReference = nextPoint
-			previousVertex = nextVertex
-			pointIndex += 1
-			###########################
+		for point in points:
+			self.draw.point([point.toTuple()], fill='gray')
 			if(imageIndex % 250 == 0):
 				imageFilename = 'output/temp/animation' + str(imageIndex) + '.png'
 				self.image.save(imageFilename)
 				imageFilenames.append(imageFilename)
 			imageIndex += 1
-		Graphics.saveAnimatedGif('output/chaos_game_sierpinski_triangle_animation.gif', imageFilenames);
+		Graphics.saveAnimatedGif(self.gifFilename, imageFilenames);
+	#generate and return a list of points
+	def generatePoints(self, pointReference, iterationCount):
+		points = []
+		for i in range(iterationCount):
+			nextVertex = self.getRandomVertex(self.listVertices);
+			nextPoint = Geometry.getPointHalfwayBetweenPoints(pointReference, nextVertex)
+			points.append(nextPoint)
+			pointReference = nextPoint
+		return points[10:] #it takes a few iterations to settle into the pattern, so skip the first points
 	@staticmethod
 	#returns a random vertex
 	# NOTE: if I limit the vertex to be different from the current vertex, the triangle does not form
-	def getRandomVertex(listVertices, previousVertex):
+	def getRandomVertex(listVertices):
 		if (len(listVertices) < 2):
 			raise Exception("Requires at least 2 vertices.")
 		return random.choice(listVertices)
 		
 #################################
+
+saveAnimatedGif = False
+if(len(sys.argv) > 1):
+	if(sys.argv[1] == '-help' or sys.argv[1] == 'help'):
+		print("Usage : python ChaosGame.py : will generate static image")
+		print("Usage : python ChaosGame.py -gif : will generate animated gif")
+		sys.exit()
+	elif(sys.argv[1] == '-gif' or sys.argv[1] == 'gif'):
+		saveAnimatedGif = True
 
 #equilateral triangle centered in image
 image = Image.new('RGB', (800, 800), 'white')
@@ -65,6 +89,8 @@ distance = 400
 points = [Point(center.x, center.y - distance)] #top of triangle
 points.append(Geometry.rotatePointAroundPoint(points[0], center, degrees = 120)) #bottom-left of triangle
 points.append(Geometry.rotatePointAroundPoint(points[0], center, degrees = -120)) #bottom-right of triangle
-chaosGame = ChaosGame(image, points);
-image.save('output/chaos_game_sierpinski_triangle.png')
-
+if(saveAnimatedGif):
+	ChaosGame(image, points, saveAnimatedGif, 'output/chaos_game_sierpinski_triangle_animation.gif');
+else:
+	ChaosGame(image, points);
+	image.save('output/chaos_game_sierpinski_triangle.png')
