@@ -30,22 +30,31 @@ class ChaosGame:
 		self.draw.line([listVertices[0].toTuple(), listVertices[-1].toTuple()], fill='gray', width=1)
 	#generate and draw the next point
 	def generate(self, listVertices, pointReference, previousVertex):
-		for i in range(10000):
+		pointIndex = 0 #it takes a few iterations to settle into the proper pattern
+		imageFilenames = []
+		imageIndex = 0
+		for i in range(25000):
 			nextVertex = self.getRandomVertex(listVertices, previousVertex);
-			fullDistance = pointReference.distance(nextVertex)
-			nextPoint = Geometry.getPointBetweenPoints(pointReference, nextVertex, fullDistance / 2)
-			self.draw.point([nextPoint.toTuple()], fill='gray')
+			nextPoint = Geometry.getPointHalfwayBetweenPoints(pointReference, nextVertex)
+			if(pointIndex > 10):
+				self.draw.point([nextPoint.toTuple()], fill='gray')
 			pointReference = nextPoint
 			previousVertex = nextVertex
+			pointIndex += 1
+			###########################
+			if(imageIndex % 250 == 0):
+				imageFilename = 'output/temp/animation' + str(imageIndex) + '.png'
+				self.image.save(imageFilename)
+				imageFilenames.append(imageFilename)
+			imageIndex += 1
+		Graphics.saveAnimatedGif('output/chaos_game_sierpinski_triangle_animation.gif', imageFilenames);
 	@staticmethod
-	#returns a random vertex that is not the previous vertex
+	#returns a random vertex
+	# NOTE: if I limit the vertex to be different from the current vertex, the triangle does not form
 	def getRandomVertex(listVertices, previousVertex):
 		if (len(listVertices) < 2):
 			raise Exception("Requires at least 2 vertices.")
-		while(True):
-			nextVertex = random.choice(listVertices)
-			if (previousVertex == None or previousVertex != nextVertex):
-				return nextVertex
+		return random.choice(listVertices)
 		
 #################################
 

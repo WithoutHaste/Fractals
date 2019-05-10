@@ -1,4 +1,5 @@
 import math as Math
+import imageio
 
 #represents an (x,y) coordinate
 class Point:
@@ -30,6 +31,9 @@ class Geometry:
 	@staticmethod
 	def degreesToRadians(degrees):
 		return degrees * Math.pi / 180
+	@staticmethod
+	def getPointHalfwayBetweenPoints(pointA, pointB):
+		return Point((pointA.x + pointB.x) / 2, (pointA.y + pointB.y) / 2)
 	@staticmethod
 	#returns a point that is "distance" away from "start", moving towards "end"
 	def getPointBetweenPoints(pointStart, pointEnd, distanceFromStart):
@@ -87,3 +91,13 @@ class Geometry:
 			if (minPoint == None or minPoint.y > point.y):
 				minPoint = point
 		return minPoint
+
+#static graphical operations		
+class Graphics:
+	@staticmethod
+	def saveAnimatedGif(filename, imageFilenames):
+		images = []
+		for imageFilename in imageFilenames:
+			images.append(imageio.imread(imageFilename))
+		imageio.mimsave(filename, images, fps=10)
+		
