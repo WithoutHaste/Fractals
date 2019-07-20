@@ -2,6 +2,12 @@
 
 Playing with fractal generation.
 
+## System Requirements
+
+`pip install Pillow`
+
+`pip install imageio`
+
 ## Usage
 
 ### Koch Curve
