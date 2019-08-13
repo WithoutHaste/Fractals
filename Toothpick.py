@@ -15,24 +15,32 @@ class ToothpickDiagram:
 	def generate(self):
 		imageWidth, imageHeight = self.image.size
 		toothpicks = []
+		openToothpicks = []
 		#initialize
-		toothpicks.append(Toothpick(Point(imageWidth/2 - Toothpick.thickness/2, imageHeight/2 - Toothpick.length/2), Point(imageWidth/2 - Toothpick.thickness/2, imageHeight/2 + Toothpick.length/2)))
+		firstToothpick = Toothpick(Point(imageWidth/2 - Toothpick.thickness/2, imageHeight/2 - Toothpick.length/2), Point(imageWidth/2 - Toothpick.thickness/2, imageHeight/2 + Toothpick.length/2), 'red')
+		toothpicks.append(firstToothpick)
+		openToothpicks.append(firstToothpick)
 		#loop
 		while(True):
 			newToothpicks = []
 			for toothpick in toothpicks:
 				if toothpick.pointAOpen:
-					newToothpicks.append(toothpick.getExtensionA())
+					newToothpick = toothpick.getExtensionA('black')
+					newToothpicks.append(newToothpick)
+					openToothpicks.append(newToothpick)
 				if toothpick.pointBOpen:
-					newToothpicks.append(toothpick.getExtensionB())
+					newToothpick = toothpick.getExtensionB('black')
+					newToothpicks.append(newToothpick)
+					openToothpicks.append(newToothpick)
 			outOfBounds = False
 			for toothpick in newToothpicks:
 				if toothpick.isOutOfBounds(imageWidth, imageHeight):
 					outOfBounds = True
 			toothpicks.extend(newToothpicks)
-			for toothpick in newToothpicks:
+			for toothpick in openToothpicks:
 				for otherToothpick in toothpicks:
-					otherToothpick.updateOpen(toothpick)
+					toothpick.updateOpen(otherToothpick)
+			openToothpicks = list(filter(lambda x: x.isOpen(), openToothpicks))
 			if outOfBounds:
 				break
 		#draw
@@ -43,11 +51,14 @@ class Toothpick:
 	thickness = 2
 	length = 20
 	#points are the center of each end of toothpick
-	def __init__(self, pointA, pointB):
+	def __init__(self, pointA, pointB, color):
 		self.pointA = pointA
 		self.pointB = pointB
 		self.pointAOpen = True
 		self.pointBOpen = True
+		self.color = color
+	def isOpen(self):
+		return (self.pointAOpen or self.pointBOpen)
 	def isHorizontal(self):
 		return self.pointA.y == self.pointB.y
 	def isVertical(self):
@@ -69,21 +80,21 @@ class Toothpick:
 	def equals(self, other):
 		return self.pointA.equals(other.pointA) and self.pointB.equals(other.pointB)
 	#returns the toothpick that is perpendicular to and centered on End A
-	def getExtensionA(self):
+	def getExtensionA(self, color):
 		if(self.isHorizontal()):
-			return Toothpick(Point(self.pointA.x, self.pointA.y - Toothpick.length/2), Point(self.pointA.x, self.pointA.y + Toothpick.length/2));
+			return Toothpick(Point(self.pointA.x, self.pointA.y - Toothpick.length/2), Point(self.pointA.x, self.pointA.y + Toothpick.length/2), color);
 		else:
-			return Toothpick(Point(self.pointA.x - Toothpick.length/2, self.pointA.y), Point(self.pointA.x + Toothpick.length/2, self.pointA.y));
+			return Toothpick(Point(self.pointA.x - Toothpick.length/2, self.pointA.y), Point(self.pointA.x + Toothpick.length/2, self.pointA.y), color);
 	#returns the toothpick that is perpendicular to and centered on End B
-	def getExtensionB(self):
+	def getExtensionB(self, color):
 		if(self.isHorizontal()):
-			return Toothpick(Point(self.pointB.x, self.pointB.y - Toothpick.length/2), Point(self.pointB.x, self.pointB.y + Toothpick.length/2));
+			return Toothpick(Point(self.pointB.x, self.pointB.y - Toothpick.length/2), Point(self.pointB.x, self.pointB.y + Toothpick.length/2), color);
 		else:
-			return Toothpick(Point(self.pointB.x - Toothpick.length/2, self.pointB.y), Point(self.pointB.x + Toothpick.length/2, self.pointB.y));
+			return Toothpick(Point(self.pointB.x - Toothpick.length/2, self.pointB.y), Point(self.pointB.x + Toothpick.length/2, self.pointB.y), color);
 	def isOutOfBounds(self, width, height):
 		return (self.pointA.isOutOfBounds(width, height) or self.pointB.isOutOfBounds(width, height))
 	def draw(self, drawObject):
-		drawObject.line([self.pointA.toTuple(), self.pointB.toTuple()], fill='black', width=Toothpick.thickness)
+		drawObject.line([self.pointA.toTuple(), self.pointB.toTuple()], fill=self.color, width=Toothpick.thickness)
 		
 class Point:
 	def __init__(self, x, y):
