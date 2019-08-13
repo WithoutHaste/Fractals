@@ -7,20 +7,103 @@ import sys
 #generate entire diagram and draw it on the image
 #starts in the center and works outward
 class ToothpickDiagram:
-	def __init__(self, image):
+	def __init__(self, image, variation='A'):
 		self.image = image
+		self.imageWidth = self.image.size[0]
+		self.imageHeight = self.image.size[1]
 		self.draw = ImageDraw.Draw(self.image)
-		self.generate()
-	#starts with a vertical toothpick in the center of the image and works outward until is hits the edges
-	def generate(self):
-		imageWidth, imageHeight = self.image.size
+		if(variation == 'A'):
+			self.runA()
+		elif(variation == 'B'):
+			self.runB()
+		elif(variation == 'C'):
+			self.runC()
+		elif(variation == 'D'):
+			self.runD()
+		elif(variation == 'E'):
+			self.runE()
+		elif(variation == 'F'):
+			self.runF()
+	#starts with a vertical toothpick in the center of the image
+	def runA(self):
 		toothpicks = []
 		openToothpicks = []
-		#initialize
-		firstToothpick = Toothpick(Point(imageWidth/2 - Toothpick.thickness/2, imageHeight/2 - Toothpick.length/2), Point(imageWidth/2 - Toothpick.thickness/2, imageHeight/2 + Toothpick.length/2), 'red')
+		firstToothpick = Toothpick(Point(self.imageWidth/2 - Toothpick.thickness/2, self.imageHeight/2 - Toothpick.length/2), Point(self.imageWidth/2 - Toothpick.thickness/2, self.imageHeight/2 + Toothpick.length/2), 'red')
 		toothpicks.append(firstToothpick)
 		openToothpicks.append(firstToothpick)
-		#loop
+		self.generate(toothpicks, openToothpicks)
+	#starts with two vertical toothpicks in the center, each toothpick two units long, at a distance of 3 units from each other
+	def runB(self):
+		toothpicks = []
+		openToothpicks = []
+		halfDistance = (Toothpick.length/2) * 1.5
+		firstToothpick = Toothpick(Point(self.imageWidth/2 - Toothpick.thickness/2 - halfDistance, self.imageHeight/2 - Toothpick.length/2), Point(self.imageWidth/2 - Toothpick.thickness/2 - halfDistance, self.imageHeight/2 + Toothpick.length/2), 'red')
+		secondToothpick = Toothpick(Point(self.imageWidth/2 - Toothpick.thickness/2 + halfDistance, self.imageHeight/2 - Toothpick.length/2), Point(self.imageWidth/2 - Toothpick.thickness/2 + halfDistance, self.imageHeight/2 + Toothpick.length/2), 'red')
+		toothpicks.append(firstToothpick)
+		toothpicks.append(secondToothpick)
+		openToothpicks.append(firstToothpick)
+		openToothpicks.append(secondToothpick)
+		self.generate(toothpicks, openToothpicks)
+	#starts with two vertical toothpicks in the center, each toothpick two units long, at a distance of 4 units from each other
+	def runC(self):
+		toothpicks = []
+		openToothpicks = []
+		halfDistance = (Toothpick.length/2) * 2
+		firstToothpick = Toothpick(Point(self.imageWidth/2 - Toothpick.thickness/2 - halfDistance, self.imageHeight/2 - Toothpick.length/2), Point(self.imageWidth/2 - Toothpick.thickness/2 - halfDistance, self.imageHeight/2 + Toothpick.length/2), 'red')
+		secondToothpick = Toothpick(Point(self.imageWidth/2 - Toothpick.thickness/2 + halfDistance, self.imageHeight/2 - Toothpick.length/2), Point(self.imageWidth/2 - Toothpick.thickness/2 + halfDistance, self.imageHeight/2 + Toothpick.length/2), 'red')
+		toothpicks.append(firstToothpick)
+		toothpicks.append(secondToothpick)
+		openToothpicks.append(firstToothpick)
+		openToothpicks.append(secondToothpick)
+		self.generate(toothpicks, openToothpicks)
+	#starts with two vertical toothpicks in the center, each toothpick two units long, at a distance of 6 units from each other
+	def runD(self):
+		toothpicks = []
+		openToothpicks = []
+		halfDistance = (Toothpick.length/2) * 3
+		firstToothpick = Toothpick(Point(self.imageWidth/2 - Toothpick.thickness/2 - halfDistance, self.imageHeight/2 - Toothpick.length/2), Point(self.imageWidth/2 - Toothpick.thickness/2 - halfDistance, self.imageHeight/2 + Toothpick.length/2), 'red')
+		secondToothpick = Toothpick(Point(self.imageWidth/2 - Toothpick.thickness/2 + halfDistance, self.imageHeight/2 - Toothpick.length/2), Point(self.imageWidth/2 - Toothpick.thickness/2 + halfDistance, self.imageHeight/2 + Toothpick.length/2), 'red')
+		toothpicks.append(firstToothpick)
+		toothpicks.append(secondToothpick)
+		openToothpicks.append(firstToothpick)
+		openToothpicks.append(secondToothpick)
+		self.generate(toothpicks, openToothpicks)
+	#starts with one vertical toothpick, and one horizontal toothpick extending tip-to-tip from it
+	def runE(self):
+		toothpicks = []
+		openToothpicks = []
+		firstToothpick = Toothpick(Point(self.imageWidth/2 - Toothpick.thickness/2, self.imageHeight/2 - Toothpick.length/2), Point(self.imageWidth/2 - Toothpick.thickness/2, self.imageHeight/2 + Toothpick.length/2), 'red')
+		secondToothpick = Toothpick(Point(self.imageWidth/2 - Toothpick.thickness/2, self.imageHeight/2 - Toothpick.length/2), Point(self.imageWidth/2 - Toothpick.thickness/2 + Toothpick.length, self.imageHeight/2 - Toothpick.length/2), 'red')
+		firstToothpick.updateOpen(secondToothpick)
+		secondToothpick.updateOpen(firstToothpick)
+		toothpicks.append(firstToothpick)
+		toothpicks.append(secondToothpick)
+		openToothpicks.append(firstToothpick)
+		openToothpicks.append(secondToothpick)
+		self.generate(toothpicks, openToothpicks)
+	#starts with four toothpick, arranged as the sides of a square that have been spread apart along the corner angles
+	def runF(self):
+		toothpicks = []
+		openToothpicks = []
+		halfDistance = Toothpick.length * 4
+		x1 = self.imageWidth/2 - halfDistance
+		x2 = self.imageWidth/2 + halfDistance
+		y1 = self.imageHeight/2 - halfDistance
+		y2 = self.imageHeight/2 + halfDistance
+		firstToothpick = Toothpick(Point(x1, y1), Point(x1, y1 + Toothpick.length), 'red')
+		secondToothpick = Toothpick(Point(x2 - Toothpick.length, y1), Point(x2, y1), 'red')
+		thirdToothpick = Toothpick(Point(x2, y2), Point(x2, y2 - Toothpick.length), 'red')
+		fourthToothpick = Toothpick(Point(x1, y2), Point(x1 + Toothpick.length, y2), 'red')
+		toothpicks.append(firstToothpick)
+		toothpicks.append(secondToothpick)
+		toothpicks.append(thirdToothpick)
+		toothpicks.append(fourthToothpick)
+		openToothpicks.append(firstToothpick)
+		openToothpicks.append(secondToothpick)
+		openToothpicks.append(thirdToothpick)
+		openToothpicks.append(fourthToothpick)
+		self.generate(toothpicks, openToothpicks)
+	def generate(self, toothpicks, openToothpicks):
 		while(True):
 			newToothpicks = []
 			for toothpick in toothpicks:
@@ -34,7 +117,7 @@ class ToothpickDiagram:
 					openToothpicks.append(newToothpick)
 			outOfBounds = False
 			for toothpick in newToothpicks:
-				if toothpick.isOutOfBounds(imageWidth, imageHeight):
+				if toothpick.isOutOfBounds(self.imageWidth, self.imageHeight):
 					outOfBounds = True
 			toothpicks.extend(newToothpicks)
 			for toothpick in openToothpicks:
@@ -109,12 +192,21 @@ class Point:
 
 #################################
 
-if(len(sys.argv) != 3 or sys.argv[1] == 'help' or sys.argv[1] == '-help'):
+if((len(sys.argv) != 3 and len(sys.argv) != 4) or sys.argv[1] == 'help' or sys.argv[1] == '-help'):
 	print("Usage : python Toothpick.py width height : fills image of this size with diagram")
+	print("Usage : python Toothpick.py variation_letter width height : fills images of this size with each toothpick-variation diagram")
 	sys.exit()
 else:
-	width = int(sys.argv[1])
-	height = int(sys.argv[2])
-	image = Image.new('RGB', (width, height), 'white')
-	toothpick = ToothpickDiagram(image)
-	image.save('output/toothpick_'+str(width)+'x'+str(height)+'.png')
+	if(len(sys.argv) == 3):
+		width = int(sys.argv[1])
+		height = int(sys.argv[2])
+		image = Image.new('RGB', (width, height), 'white')
+		toothpick = ToothpickDiagram(image)
+		image.save('output/toothpick_'+str(width)+'x'+str(height)+'.png')
+	elif(len(sys.argv) == 4):
+		variation = sys.argv[1].upper()
+		width = int(sys.argv[2])
+		height = int(sys.argv[3])
+		image = Image.new('RGB', (width, height), 'white')
+		toothpick = ToothpickDiagram(image, variation)
+		image.save('output/toothpick_'+variation+'_'+str(width)+'x'+str(height)+'.png')
